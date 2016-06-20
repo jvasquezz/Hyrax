@@ -7,7 +7,7 @@ Usage:
 
 from setuptools import setup
 
-APP = ['Evernote Quick Notes.py']
+APP = ['Quick_Notes.py']
 DATA_FILES = []
 OPTIONS = {'argv_emulation': True}
 
