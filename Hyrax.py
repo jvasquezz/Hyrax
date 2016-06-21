@@ -95,20 +95,42 @@ def on_entry_click(event):
 	textbox.config(font="Verdana 13")
 	textbox.tag_add("DEFAULT", '1.0', END)
 	textbox.tag_config("DEFAULT", font="Verdana 13")
+	textbox.tag_config("COMMENTLINE", font="Verdana 13 italic", foreground="#75715E")	
+
 	#bg="red", fg="#F8F8F2", font="Verdana 13")
 
 word = ""
-
+current_index = 1
 def on_key_press(event):
-	if event.char is '#':
-		countVar = StringVar()
-		pos = textbox.search("#.+\n", "1.0", regexp=True)
-		end = textbox.search(".+", pos, regexp=True)
-		textbox.tag_add("COMMENTLINE", pos, end) ##"%s + %sc" (pos, end))
-		textbox.tag_config("COMMENTLINE", background="Blue")
+	if event.char is '':
+		return
+
+	global current_index
+	current_index += 1
+	print event.char
+	print textbox.get("1.0", END)
+	
+
+	# pos = current_index 
+	# pos = textbox.search("#", "1.0", regexp=True)
+	# if event.char is '#':
+	# 	textbox.tag_add("COMMENTLINE", pos, END)
+	# 	textbox.tag_config("COMMENTLINE", font="Verdana 13 italic", foreground="#75715E")
+		# countVar = StringVar()
+		# pos = textbox.search("#.+", "1.0", regexp=True)
+		# offset = '+%dc' % len(word) # +5c (5 chars)
+		# end = textbox.search(".+", pos+offset, regexp=True)
+	# if event.char is '\n':
+		# textbox.tag_add("DEFAULT", pos, END)
+		# textbox.tag_add("COMMENTLINE", pos, end) ##"%s + %sc" (pos, end))
+		# textbox.tag_config("COMMENTLINE", background="Blue", font="Verdana 13 italic")
 		# textbox.tag_add("COMMENTLINE", )
 		# text.tag_add("search", pos, "%s + %sc" (pos, countVar.get()))
 
+def on_enter(event):
+	char = event.char
+	pos = textbox.search("$\n", "1.0", regexp=True)
+	textbox.tag_add("DEFAULT", pos, END)
 	# global word
 	# word += event.char
 	# if len(word) > 5:
@@ -118,6 +140,11 @@ def on_key_press(event):
 
 # <WordsStyle name="COMMENTLINE" styleID="1" fgColor="75715E" bgColor="272822" 
 # fontName="" fontStyle="" fontSize="10" />
+def on_comment(event):
+	print 'oncomments'
+	pos = textbox.search("#", "1.0", regexp=True)
+	if event.char is '#':
+		textbox.tag_add("COMMENTLINE", pos, END)
 
 
 textbox = Text(gui, highlightthickness=0)
@@ -129,6 +156,8 @@ textbox.insert(INSERT, "Dassies..")
 
 textbox.bind('<FocusIn>', on_entry_click)
 textbox.bind('<Key>', on_key_press)
+textbox.bind('<Shift-Key-#>', on_comment)
+# textbox.bind('<Return>', on_enter)
 
 e = Entry(gui)
 e.config(font="Verdana 14", selectbackground="#139C1A", selectforeground="White")
