@@ -102,9 +102,6 @@ def on_entry_click(event):
 word = ""
 current_index = 1
 def on_key_press(event):
-	if event.char is '':
-		return
-
 	global current_index
 	current_index += 1
 	print event.char
@@ -128,8 +125,11 @@ def on_key_press(event):
 		# text.tag_add("search", pos, "%s + %sc" (pos, countVar.get()))
 
 def on_enter(event):
+	print "onEnter"
+	global isCommentsOn
+	isCommentsOn = False
 	char = event.char
-	pos = textbox.search("$\n", "1.0", regexp=True)
+	pos = textbox.search(".$", "1.0", regexp=True)
 	textbox.tag_add("DEFAULT", pos, END)
 	# global word
 	# word += event.char
@@ -140,9 +140,14 @@ def on_enter(event):
 
 # <WordsStyle name="COMMENTLINE" styleID="1" fgColor="75715E" bgColor="272822" 
 # fontName="" fontStyle="" fontSize="10" />
+isCommentsOn = False
 def on_comment(event):
-	print 'oncomments'
-	pos = textbox.search("#", "1.0", regexp=True)
+	global isCommentsOn
+	if isCommentsOn is True:
+		return
+	# print 'oncomments'
+	pos = textbox.search(".$", "1.0", regexp=True)
+	# print pos
 	if event.char is '#':
 		textbox.tag_add("COMMENTLINE", pos, END)
 
