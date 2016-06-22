@@ -94,7 +94,7 @@ def on_entry_click(event):
 		textbox.delete('1.0', END) # delete all the text in the entry
 	textbox.config(font="Verdana 13")
 	textbox.tag_add("DEFAULT", '1.0', END)
-	textbox.tag_config("DEFAULT", font="Verdana 13")
+	textbox.tag_config("DEFAULT", font="Verdana 13", foreground="#F8F8F2")
 	textbox.tag_config("COMMENTLINE", font="Verdana 13 italic", foreground="#75715E")	
 
 	#bg="red", fg="#F8F8F2", font="Verdana 13")
@@ -162,7 +162,7 @@ textbox.insert(INSERT, "Dassies..")
 textbox.bind('<FocusIn>', on_entry_click)
 textbox.bind('<Key>', on_key_press)
 textbox.bind('<Shift-Key-#>', on_comment)
-# textbox.bind('<Return>', on_enter)
+textbox.bind('<Return>', on_enter)
 
 e = Entry(gui)
 e.config(font="Verdana 14", selectbackground="#139C1A", selectforeground="White")
