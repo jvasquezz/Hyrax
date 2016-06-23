@@ -43,7 +43,9 @@ class ArdentButton(tk.Button):
                   'local': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/icon_save.gif',
                   'google_drive': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/google_drive.gif',
                   'duck_duck_go': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/duck_duck_go.gif',
-                  'git_lab': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/git_lab.gif'}
+                  'git_lab': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/git_lab.gif',
+                  'thrash': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/thrash.gif',
+                  }
 
     def __init__(self, root, which):
         tk.Button.__init__(self, root)
@@ -58,8 +60,10 @@ if __name__ == '__main__':
     save_to_evernote = ArdentButton(gui, 'evernote')
     save_to_local = ArdentButton(gui, 'local')
     save_to_google_drive = ArdentButton(gui, 'google_drive')
-    search_duck_duck_go = ArdentButton(gui, 'duck_duck_go')
     save_git_lab = ArdentButton(gui, 'git_lab')
+
+    search_duck_duck_go = ArdentButton(gui, 'duck_duck_go')
+    remove_trash = ArdentButton(gui, 'thrash')
 
     textbox.pack()
     save_to_evernote.pack(side=tk.LEFT)
@@ -67,4 +71,5 @@ if __name__ == '__main__':
     save_to_google_drive.pack(side=tk.LEFT)
     save_git_lab.pack(side=tk.LEFT)
     search_duck_duck_go.pack(side=tk.LEFT)
+    remove_trash.pack(side=tk.RIGHT)
     gui.mainloop()
