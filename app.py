@@ -41,7 +41,9 @@ class TextFormat(tk.Text):
 class ArdentButton(tk.Button):
     icons_dict = {'evernote': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/evernote0.gif',
                   'local': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/icon_save.gif',
-                  'google_drive': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/google_drive.gif'}
+                  'google_drive': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/google_drive.gif',
+                  'duck_duck_go': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/duck_duck_go.gif',
+                  'git_lab': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/git_lab.gif'}
 
     def __init__(self, root, which):
         tk.Button.__init__(self, root)
@@ -56,9 +58,13 @@ if __name__ == '__main__':
     save_to_evernote = ArdentButton(gui, 'evernote')
     save_to_local = ArdentButton(gui, 'local')
     save_to_google_drive = ArdentButton(gui, 'google_drive')
+    search_duck_duck_go = ArdentButton(gui, 'duck_duck_go')
+    save_git_lab = ArdentButton(gui, 'git_lab')
 
     textbox.pack()
     save_to_evernote.pack(side=tk.LEFT)
     save_to_local.pack(side=tk.LEFT)
     save_to_google_drive.pack(side=tk.LEFT)
+    save_git_lab.pack(side=tk.LEFT)
+    search_duck_duck_go.pack(side=tk.LEFT)
     gui.mainloop()
