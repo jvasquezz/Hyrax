@@ -1,5 +1,6 @@
 import Tkinter as tk
 import os
+import shrewmouse.R as R
 
 print 'cwd:', os.getcwd()
 
@@ -11,7 +12,8 @@ class TextFormat(tk.Text):
     def __init__(self, root):
         tk.Text.__init__(self, root)
         self.config_tags()
-        self.config(width=40, height=28, insertbackground='white', relief=tk.SOLID, selectbackground='#8000FF', wrap=tk.NONE,
+        self.config(width=40, height=28, insertbackground='white', relief=tk.SOLID, selectbackground='#8000FF',
+                    wrap=tk.NONE,
                     insertborderwidth='1', highlightthickness=0, bg="#272822", fg="#F8F8F2", bd=0, font="Verdana 13")
         self.tag_add('default', '1.0', tk.END)
         self.bind(sequence='<Shift-KeyRelease-#>', func=self.on_shift_hash_release)
@@ -40,18 +42,9 @@ class TextFormat(tk.Text):
 
 
 class ArdentButton(tk.Button):
-    icons_dict = {'evernote': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/evernote0.gif',
-                  'local': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/icon_save.gif',
-                  'google_drive': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/google_drive.gif',
-                  'duck_duck_go': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/duck_duck_go.gif',
-                  'git_lab': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/git_lab.gif',
-                  'thrash': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/thrash.gif',
-                  'clipboard': '/Users/jonathanvasquez/PycharmProjects/Hyrax/resources/clipboard.gif',
-                  }
-
     def __init__(self, root, which):
         tk.Button.__init__(self, root)
-        self.icon = tk.PhotoImage(file=self.icons_dict.get(which))
+        self.icon = tk.PhotoImage(file=R.icons.get(which))
         self.config(image=self.icon, width='25', height='25', bd=0, relief=tk.RIDGE)
 
 
@@ -75,10 +68,6 @@ if __name__ == '__main__':
     save_to_google_drive.pack(side=tk.LEFT)
     save_git_lab.pack(side=tk.LEFT)
     search_duck_duck_go.pack(side=tk.LEFT)
-
-    yscrollbar = tk.Scrollbar(gui, orient=tk.VERTICAL, command=textbox.yview)
-    yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-    textbox["yscrollcommand"] = yscrollbar.set
 
     remove_trash.pack(side=tk.RIGHT)
     copy_to_clipboard.pack(side=tk.RIGHT)
