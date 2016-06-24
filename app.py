@@ -58,7 +58,7 @@ class ArdentButton(tk.Button):
 if __name__ == '__main__':
     gui = tk.Tk()
     gui.title('hyrax')
-
+    gui.overrideredirect
     textbox = TextFormat(gui)
     save_to_evernote = ArdentButton(gui, 'evernote')
     save_to_local = ArdentButton(gui, 'local')
@@ -69,12 +69,16 @@ if __name__ == '__main__':
     remove_trash = ArdentButton(gui, 'thrash')
     copy_to_clipboard = ArdentButton(gui, 'clipboard')
 
-    textbox.pack()
+    textbox.pack(side=tk.TOP, fill=tk.BOTH, expand=tk.YES)
     save_to_evernote.pack(side=tk.LEFT)
     save_to_local.pack(side=tk.LEFT)
     save_to_google_drive.pack(side=tk.LEFT)
     save_git_lab.pack(side=tk.LEFT)
     search_duck_duck_go.pack(side=tk.LEFT)
+
+    yscrollbar = tk.Scrollbar(gui, orient=tk.VERTICAL, command=textbox.yview)
+    yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    textbox["yscrollcommand"] = yscrollbar.set
 
     remove_trash.pack(side=tk.RIGHT)
     copy_to_clipboard.pack(side=tk.RIGHT)
