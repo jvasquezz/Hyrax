@@ -1,5 +1,7 @@
 import Tkinter as tk
 import os
+import jenkinsapi
+from jenkinsapi.jenkins import Jenkins
 
 print 'cwd:', os.getcwd()
 
