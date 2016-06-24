@@ -75,22 +75,23 @@ if __name__ == '__main__':
     gui.title('hyrax')
     # gui.overrideredirect
     textbox = TextFormat(gui)
+
+    ''' button declares '''
     save_to_evernote = ArdentButton(gui, 'evernote')
     save_to_local = ArdentButton(gui, 'local')
     save_to_google_drive = ArdentButton(gui, 'google_drive')
     save_git_lab = ArdentButton(gui, 'git_lab')
-
     search_duck_duck_go = ArdentButton(gui, 'duck_duck_go')
     remove_trash = ArdentButton(gui, 'thrash')
     copy_to_clipboard = ArdentButton(gui, 'clipboard')
 
+    ''' packs and layout '''
     textbox.pack(side=tk.TOP, fill=tk.BOTH, expand=tk.YES)
     save_to_evernote.pack(side=tk.LEFT)
     save_to_local.pack(side=tk.LEFT)
     save_to_google_drive.pack(side=tk.LEFT)
     save_git_lab.pack(side=tk.LEFT)
     search_duck_duck_go.pack(side=tk.LEFT)
-
     remove_trash.pack(side=tk.RIGHT)
     copy_to_clipboard.pack(side=tk.RIGHT)
     gui.mainloop()
