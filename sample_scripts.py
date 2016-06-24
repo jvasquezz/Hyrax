@@ -1,5 +1,6 @@
 from Tkinter import *
 
+# class Application(Frame):
 class Application(Frame):
     def say_hi(self):
         print "hi there, everyone!"
@@ -7,8 +8,8 @@ class Application(Frame):
     def createWidgets(self):
         self.QUIT = Button(self)
         self.QUIT["text"] = "QUIT"
-        self.QUIT["fg"]   = "red"
-        self.QUIT["command"] =  self.quit
+        self.QUIT["fg"] = "red"
+        self.QUIT["command"] = self.quit
 
         self.QUIT.pack({"side": "left"})
 
@@ -23,12 +24,13 @@ class Application(Frame):
         self.pack()
         self.createWidgets()
 
+
 root = Tk()
 app = Application(master=root)
 app.mainloop()
 root.destroy()
 
-------------------------------------------------------
+# ------------------------------------------------------
 
 from Tkinter import *
 
@@ -38,7 +40,7 @@ T.pack()
 T.insert(END, "Just a text Widget\nin two lines\n")
 mainloop()
 
-------------------------------------------------------
+# ------------------------------------------------------
 
 # import pdb; 
 # from Tkinter import *
