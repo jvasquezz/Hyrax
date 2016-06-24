@@ -7,7 +7,7 @@ Usage:
 
 from setuptools import setup
 
-APP = ['Hyrax.py']
+APP = ['app.py']
 DATA_FILES = []
 OPTIONS = {'argv_emulation': True}
 
