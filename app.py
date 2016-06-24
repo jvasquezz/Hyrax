@@ -1,10 +1,23 @@
 import Tkinter as tk
 import os
 import shrewmouse.R as R
+import settings
+from os.path import join, dirname
+# from dotenv import load_dotenv
+from evernote.api.client import EvernoteClient
+from dotenv import load_dotenv
+
+load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
+print os.path.join(os.path.dirname(__file__), '.env')
 
 print 'cwd:', os.getcwd()
 
 
+# require 'dotenv'
+# Dotenv.load
+# puts ENV['EVERNOTE_API_KEY']
+
+# env.dotenv_path = ''
 class TextFormat(tk.Text):
     tags = [['default', 'Verdana 13', '#F8F8F2'],
             ['comment', 'Verdana 13 italic', '#75715E']]
@@ -46,12 +59,21 @@ class ArdentButton(tk.Button):
         tk.Button.__init__(self, root)
         self.icon = tk.PhotoImage(file=R.icons.get(which))
         self.config(image=self.icon, width='25', height='25', bd=0, relief=tk.RIDGE)
+        if which is 'evernote':
+            self.bind('<Button-1>', self.evernote)
+
+    def evernote(self, event):
+        auth_token = settings.EVERNOTE_API_KEY
+        client = EvernoteClient(token=auth_token, sandbox=False)
+        user = client.get_user_store()
+        note_store = client.get_note_store()
+        notebooks = note_store.listNotebooks()
 
 
 if __name__ == '__main__':
     gui = tk.Tk()
     gui.title('hyrax')
-    gui.overrideredirect
+    # gui.overrideredirect
     textbox = TextFormat(gui)
     save_to_evernote = ArdentButton(gui, 'evernote')
     save_to_local = ArdentButton(gui, 'local')
