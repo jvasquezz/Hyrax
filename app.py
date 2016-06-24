@@ -11,7 +11,8 @@ class TextFormat(tk.Text):
     def __init__(self, root):
         tk.Text.__init__(self, root)
         self.config_tags()
-        self.config(highlightthickness=0, bg="#272822", fg="#F8F8F2", bd=0, font="Verdana 13")
+        self.config(width=40, height=28, insertbackground='white', relief=tk.SOLID, selectbackground='#8000FF', wrap=tk.NONE,
+                    insertborderwidth='1', highlightthickness=0, bg="#272822", fg="#F8F8F2", bd=0, font="Verdana 13")
         self.tag_add('default', '1.0', tk.END)
         self.bind(sequence='<Shift-KeyRelease-#>', func=self.on_shift_hash_release)
         self.bind(sequence='<Return>', func=self.on_line_break)
@@ -57,6 +58,7 @@ class ArdentButton(tk.Button):
 if __name__ == '__main__':
     gui = tk.Tk()
     gui.title('hyrax')
+
     textbox = TextFormat(gui)
     save_to_evernote = ArdentButton(gui, 'evernote')
     save_to_local = ArdentButton(gui, 'local')
