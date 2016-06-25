@@ -2,7 +2,6 @@ import os
 import tkinter as tk
 import resources.R as R
 import settings
-import thread
 import threading
 from evernote.api.client import evernote_client
 import evernote.edam.type.ttypes as Types
@@ -15,6 +14,7 @@ print('cwd:', os.getcwd())
 class TextFormat(tk.Text):
     tags = [['default', 'Verdana 13', '#F8F8F2'],
             ['comment', 'Verdana 13 italic', '#75715E']]
+    line_count = 1
 
     def __init__(self, root):
         tk.Text.__init__(self, root)
@@ -42,9 +42,13 @@ class TextFormat(tk.Text):
         while char != '\n':
             last_col += 1
             char = self.get('%s.%d' % (line, last_col))
-        self.tag_add("comment", tk.INSERT + '-1c', tk.END)
+        if line is str(self.line_count):
+            self.tag_add("comment", tk.INSERT + '-1c', tk.END)
+        else:
+            self.tag_add("comment", tk.INSERT + '-1c', line + '.' + str(last_col))
 
     def on_line_break(self, event):
+        self.line_count += 1
         self.remove_tags(tk.INSERT, tk.END)
         self.tag_add('default', tk.INSERT + '-1c', tk.END)
 
@@ -53,6 +57,7 @@ class TextFormat(tk.Text):
 def threaded(function):
     def wrapper(*args, **kwargs):
         threading.Thread(target=function, args=args, kwargs=kwargs).start()
+
     return wrapper
 
 
