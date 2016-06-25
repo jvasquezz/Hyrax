@@ -44,7 +44,7 @@ mainloop()
 
 # import pdb; 
 # from Tkinter import *
-from evernote.api.client import EvernoteClient
+from evernote.api.client import evernote_client
 
 # pdb.set_trace()
 # top = Tkinter.Tk()
@@ -53,7 +53,7 @@ from evernote.api.client import EvernoteClient
 
 # connect to sandbox and get userrname
 dev_token = 'S=s116:U=c6683a:E=15cbd7eead1:C=15565cdbcf0:P=1cd:A=en-devtoken:V=2:H=30d64b69c592247912132328448813a1'
-client = EvernoteClient(token=dev_token, sandbox=False)
+client = evernote_client(token=dev_token, sandbox=False)
 userStore = client.get_user_store()
 user = userStore.getUser()
 print user.username

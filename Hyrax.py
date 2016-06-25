@@ -24,7 +24,7 @@ except ImportError:
 from past import autotranslate
 
 autotranslate(['evernote.api.client'])
-from evernote.api.client import EvernoteClient
+from evernote.api.client import evernote_client
 
 # import evernote
 
@@ -65,7 +65,7 @@ def save_locally():
 # 	return userStore.getUser()
 
 auth_token = 'S=s116:U=c6683a:E=15cd2641d76:C=1557ab2ef78:P=1cd:A=en-devtoken:V=2:H=81b3a396006e4ac040c1403dcb017a2c'
-client = EvernoteClient(token=auth_token, sandbox=False)
+client = evernote_client(token=auth_token, sandbox=False)
 
 # get user object
 user = client.get_user_store()

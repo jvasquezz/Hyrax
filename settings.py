@@ -3,7 +3,7 @@ import os
 from os.path import join, dirname
 from dotenv import load_dotenv
 
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+dot_env_path = join(dirname(__file__), '.env')
+load_dotenv(dot_env_path)
 
 EVERNOTE_API_KEY = os.environ.get('EVERNOTE_API_KEY')

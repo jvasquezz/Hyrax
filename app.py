@@ -1,15 +1,13 @@
-import Tkinter as tk
 import os
-from os.path import join, dirname
-import shrewmouse.R as R
+import tkinter as tk
+import resources.R as R
 import settings
-from evernote.api.client import EvernoteClient
+from evernote.api.client import evernote_client
 from dotenv import load_dotenv
 
 load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
-print os.path.join(os.path.dirname(__file__), '.env')
+print('cwd:', os.getcwd())
 
-print 'cwd:', os.getcwd()
 
 class TextFormat(tk.Text):
     tags = [['default', 'Verdana 13', '#F8F8F2'],
@@ -57,7 +55,7 @@ class ArdentButton(tk.Button):
 
     def evernote(self, event):
         auth_token = settings.EVERNOTE_API_KEY
-        client = EvernoteClient(token=auth_token, sandbox=False)
+        client = evernote_client(token=auth_token, sandbox=False)
         user = client.get_user_store()
         note_store = client.get_note_store()
         notebooks = note_store.listNotebooks()
