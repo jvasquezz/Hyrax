@@ -9,7 +9,10 @@ from setuptools import setup
 
 APP = ['app.py']
 DATA_FILES = []
-OPTIONS = {'argv_emulation': True}
+OPTIONS = {
+	'argv_emulation': True,
+	'packages': ['resources', 'scripts']
+	}
 
 setup(
     app=APP,

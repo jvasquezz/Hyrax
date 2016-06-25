@@ -3,7 +3,7 @@ import tkinter as tk
 import resources.R as R
 import settings
 import threading
-from evernote.api.client import evernote_client
+from evernote.api.client import EvernoteClient as evernote_client
 import evernote.edam.type.ttypes as Types
 from dotenv import load_dotenv
 
