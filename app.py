@@ -2,7 +2,10 @@ import os
 import tkinter as tk
 import resources.R as R
 import settings
+import thread
+import threading
 from evernote.api.client import evernote_client
+import evernote.edam.type.ttypes as Types
 from dotenv import load_dotenv
 
 load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
@@ -22,6 +25,7 @@ class TextFormat(tk.Text):
         self.tag_add('default', '1.0', tk.END)
         self.bind(sequence='<Shift-KeyRelease-#>', func=self.on_shift_hash_release)
         self.bind(sequence='<Return>', func=self.on_line_break)
+        pass
 
     def config_tags(self):
         for tag in self.tags:
@@ -45,6 +49,13 @@ class TextFormat(tk.Text):
         self.tag_add('default', tk.INSERT + '-1c', tk.END)
 
 
+# it threads any decorated function - http://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators
+def threaded(function):
+    def wrapper(*args, **kwargs):
+        threading.Thread(target=function, args=args, kwargs=kwargs).start()
+    return wrapper
+
+
 class ArdentButton(tk.Button):
     def __init__(self, root, which):
         tk.Button.__init__(self, root)
@@ -52,13 +63,41 @@ class ArdentButton(tk.Button):
         self.config(image=self.icon, width='25', height='25', bd=0, relief=tk.RIDGE)
         if which is 'evernote':
             self.bind('<Button-1>', self.evernote)
+        pass
 
-    def evernote(self, event):
-        auth_token = settings.EVERNOTE_API_KEY
-        client = evernote_client(token=auth_token, sandbox=False)
-        user = client.get_user_store()
+    @staticmethod
+    @threaded
+    def evernote(event):
+        accounts = Accounts()
+        note = Types.Note()
+        note.title = "Hyrax rune"
+        client = accounts.evernote
+        # user = client.get_user_store()
+        # print(user.getUser())
         note_store = client.get_note_store()
-        notebooks = note_store.listNotebooks()
+        note.content = '<?xml version="1.0" encoding="UTF-8"?>' \
+                       '<!DOCTYPE en-note SYSTEM ' \
+                       '"http://xml.evernote.com/pub/enml2.dtd">' \
+                       '<en-note>'
+        note.content += textbox.get("1.0", tk.END)
+        note.content += '</en-note>'
+        # notebooks = note_store.listNotebooks()
+        note_store.createNote(note)
+        print('saved to evernote')
+
+
+class Accounts:
+    evernote = evernote_client
+
+    def __init__(self):
+        self.init_evernote()
+        pass
+
+    def init_evernote(self):
+        self.evernote = evernote_client(token=settings.EVERNOTE_API_KEY,
+                                        consumer_key=settings.EVERNOTE_CONSUMER_KEY,
+                                        consumer_secret=settings.EVERNOTE_CONSUMER_SECRET,
+                                        sandbox=True)
 
 
 if __name__ == '__main__':

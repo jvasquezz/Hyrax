@@ -1,4 +1,4 @@
 from os import system
-with open('requirements.txt') as f:
-    for line in f:
-        system('pip install ' + line)
+with open('requirements.txt') as req:
+    for package in req:
+        system('pip install ' + package)
