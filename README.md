@@ -11,7 +11,7 @@ $ source ./venv/bin/activate
 ```
 
 <h5>Your output should be similar to this</h5>
-```python
+```javascript
 # from your root dir
 $ virtualenv venv
     New python executable in /Users/jonathanvasquez/PycharmProjects/Hyrax/resources/venv/bin/python
