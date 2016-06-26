@@ -20,8 +20,8 @@ OPTIONS = {
         'CFBundleDisplayName': APP_NAME,
         'CFBundleGetInfoString': "Cloud connected typesetting",
         'CFBundleIdentifier': "com.rurouni.macOS.hyrax",
-        'CFBundleVersion': "0.3",
-        'CFBundleShortVersionString': "0.3",
+        'CFBundleVersion': "0.3.0",
+        'CFBundleShortVersionString': "0.3.0",
         'NSHumanReadableCopyright': u"Copyright © 2016, Rurouni, All Rights Reserved"
     }
 }
