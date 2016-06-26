@@ -1,3 +1,4 @@
+import io
 import os
 import tkinter as tk
 import resources.R as R
@@ -6,6 +7,7 @@ import threading
 from evernote.api.client import EvernoteClient as evernote_client
 import evernote.edam.type.ttypes as types
 from dotenv import load_dotenv
+import json
 
 load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 print('cwd:', os.getcwd())
@@ -51,6 +53,7 @@ class TextFormat(tk.Text):
         self.line_count += 1
         self.remove_tags(tk.INSERT, tk.END)
         self.tag_add('default', tk.INSERT + '-1c', tk.END)
+        # accounts.local
 
 
 # it threads any decorated function - http://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators
@@ -66,14 +69,15 @@ class ArdentButton(tk.Button):
         tk.Button.__init__(self, root)
         self.icon = tk.PhotoImage(file=R.icons.get(which))
         self.config(image=self.icon, width='25', height='25', bd=0, relief=tk.RIDGE)
-        if which is 'evernote':
+        if 'evernote' is which:
             self.bind('<Button-1>', self.evernote)
+        if 'local' is which:
+            self.bind('<Button-1>', self.local_storage)
         pass
 
     @staticmethod
     @threaded
     def evernote(event):
-        accounts = Accounts()
         note = types.Note()
         note.title = "Hyrax rune"
         client = accounts.evernote
@@ -90,12 +94,23 @@ class ArdentButton(tk.Button):
         note_store.createNote(note)
         print('saved to evernote')
 
+    @staticmethod
+    def local_storage(event):
+        data = textbox.get('1.0', tk.END)
+        # encoded = json.dumps(data, ensure_ascii=False).encode('utf8')
+        with open('data.json', 'wb') as f:
+            json.dump({'data': data}, f)
+            print(data)
+            # print(encoded)
+
 
 class Accounts:
     evernote = evernote_client
+    load_from_cache = []
 
     def __init__(self):
         self.init_evernote()
+        self.local_storage()
         pass
 
     def init_evernote(self):
@@ -104,11 +119,19 @@ class Accounts:
                                         consumer_secret=settings.EVERNOTE_CONSUMER_SECRET,
                                         sandbox=True)
 
+    def local_storage(self):
+        try:
+            with open('data.json') as cached_json_object:
+                self.load_from_cache = json.load(cached_json_object)
+                textbox.insert(tk.INSERT, self.load_from_cache['data'])
+        except IOError:
+            pass
 
 if __name__ == '__main__':
     gui = tk.Tk()
     gui.title('hyrax')
     textbox = TextFormat(gui)
+    accounts = Accounts()
 
     ''' button declares '''
     save_to_evernote = ArdentButton(gui, 'evernote')
