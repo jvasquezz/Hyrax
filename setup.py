@@ -12,6 +12,7 @@ APP = ['app.py']
 APP_NAME = 'Hyrax'
 DATA_FILES = []
 OPTIONS = {
+    'iconfile': 'resources/img/icn.icns',
     'argv_emulation': True,
     'packages': ['resources', 'scripts'],
     'plist': {
