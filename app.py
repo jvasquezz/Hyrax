@@ -4,7 +4,7 @@ import resources.R as R
 import settings
 import threading
 from evernote.api.client import EvernoteClient as evernote_client
-import evernote.edam.type.ttypes as Types
+import evernote.edam.type.ttypes as types
 from dotenv import load_dotenv
 
 load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
@@ -74,7 +74,7 @@ class ArdentButton(tk.Button):
     @threaded
     def evernote(event):
         accounts = Accounts()
-        note = Types.Note()
+        note = types.Note()
         note.title = "Hyrax rune"
         client = accounts.evernote
         # user = client.get_user_store()
@@ -84,7 +84,7 @@ class ArdentButton(tk.Button):
                        '<!DOCTYPE en-note SYSTEM ' \
                        '"http://xml.evernote.com/pub/enml2.dtd">' \
                        '<en-note>'
-        note.content += textbox.get("1.0", tk.END)
+        note.content += textbox.get('1.0', tk.END)
         note.content += '</en-note>'
         # notebooks = note_store.listNotebooks()
         note_store.createNote(note)
