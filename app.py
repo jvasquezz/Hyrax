@@ -1,13 +1,14 @@
-import io
+import json
 import os
+import threading
+
+import evernote.edam.type.ttypes as types
 import tkinter as tk
+from dotenv import load_dotenv
+from evernote.api.client import EvernoteClient as evernote_client
+
 import resources.R as R
 import settings
-import threading
-from evernote.api.client import EvernoteClient as evernote_client
-import evernote.edam.type.ttypes as types
-from dotenv import load_dotenv
-import json
 
 load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 print('cwd:', os.getcwd())
@@ -16,10 +17,10 @@ print('cwd:', os.getcwd())
 class TextFormat(tk.Text):
     tags = [['default', 'Verdana 13', '#F8F8F2'],
             ['comment', 'Verdana 13 italic', '#75715E']]
-    line_count = 1
 
     def __init__(self, root):
         tk.Text.__init__(self, root)
+        self.line_count = '1'
         self.config_tags()
         self.config(width=40, height=28, insertbackground='white', relief=tk.SOLID, selectbackground='#8000FF',
                     wrap=tk.NONE,
@@ -38,25 +39,29 @@ class TextFormat(tk.Text):
             self.tag_remove(tag[0], start, end)
 
     def on_shift_hash_release(self, event):
-        line = self.index(tk.INSERT).split('.')[0]
+        current_line = self.index(tk.INSERT).split('.')[0]
+        if current_line == self.line_count:
+            self.tag_add("comment", tk.INSERT + '-1c', tk.END)
+            return
+
         last_col = 0
-        char = self.get('%s.%d' % (line, last_col))
+        char = self.get('%s.%d' % (current_line, last_col))
         while char != '\n':
             last_col += 1
-            char = self.get('%s.%d' % (line, last_col))
-        if line is str(self.line_count):
-            self.tag_add("comment", tk.INSERT + '-1c', tk.END)
-        else:
-            self.tag_add("comment", tk.INSERT + '-1c', line + '.' + str(last_col))
+            char = self.get('%s.%d' % (current_line, last_col))
+        self.tag_add("comment", tk.INSERT + '-1c', current_line + '.' + str(last_col))
 
     def on_line_break(self, event):
-        self.line_count += 1
+        self.line_count = self.index(tk.END).split('.')[0]
         self.remove_tags(tk.INSERT, tk.END)
         self.tag_add('default', tk.INSERT + '-1c', tk.END)
-        # accounts.local
+        ''' auto save on line break '''
+        with open('data.json', 'wb') as f:
+            data = self.get('1.0', tk.END)
+            json.dump({'data': data, 'line_count': self.line_count}, f)
 
 
-# it threads any decorated function - http://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators
+# threads any decorated function - http://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators
 def threaded(function):
     def wrapper(*args, **kwargs):
         threading.Thread(target=function, args=args, kwargs=kwargs).start()
@@ -70,14 +75,14 @@ class ArdentButton(tk.Button):
         self.icon = tk.PhotoImage(file=R.icons.get(which))
         self.config(image=self.icon, width='25', height='25', bd=0, relief=tk.RIDGE)
         if 'evernote' is which:
-            self.bind('<Button-1>', self.evernote)
+            self.bind('<Button-1>', self.save_to_evernote)
         if 'local' is which:
-            self.bind('<Button-1>', self.local_storage)
+            self.bind('<Button-1>', self.save_to_local)
         pass
 
     @staticmethod
     @threaded
-    def evernote(event):
+    def save_to_evernote(event):
         note = types.Note()
         note.title = "Hyrax rune"
         client = accounts.evernote
@@ -95,13 +100,8 @@ class ArdentButton(tk.Button):
         print('saved to evernote')
 
     @staticmethod
-    def local_storage(event):
-        data = textbox.get('1.0', tk.END)
-        # encoded = json.dumps(data, ensure_ascii=False).encode('utf8')
-        with open('data.json', 'wb') as f:
-            json.dump({'data': data}, f)
-            print(data)
-            # print(encoded)
+    def save_to_local(event):
+        print('saved to local')
 
 
 class Accounts:
@@ -110,7 +110,7 @@ class Accounts:
 
     def __init__(self):
         self.init_evernote()
-        self.local_storage()
+        self.load_local_cache()
         pass
 
     def init_evernote(self):
@@ -119,13 +119,15 @@ class Accounts:
                                         consumer_secret=settings.EVERNOTE_CONSUMER_SECRET,
                                         sandbox=True)
 
-    def local_storage(self):
+    def load_local_cache(self):
         try:
             with open('data.json') as cached_json_object:
                 self.load_from_cache = json.load(cached_json_object)
                 textbox.insert(tk.INSERT, self.load_from_cache['data'])
+                textbox.line_count = self.load_from_cache['line_count']
         except IOError:
             pass
+
 
 if __name__ == '__main__':
     gui = tk.Tk()
@@ -133,9 +135,9 @@ if __name__ == '__main__':
     textbox = TextFormat(gui)
     accounts = Accounts()
 
-    ''' button declares '''
-    save_to_evernote = ArdentButton(gui, 'evernote')
-    save_to_local = ArdentButton(gui, 'local')
+    ''' button declarations '''
+    evernote_button = ArdentButton(gui, 'evernote')
+    save_local_button = ArdentButton(gui, 'local')
     save_to_google_drive = ArdentButton(gui, 'google_drive')
     save_git_lab = ArdentButton(gui, 'git_lab')
     search_duck_duck_go = ArdentButton(gui, 'duck_duck_go')
@@ -144,8 +146,8 @@ if __name__ == '__main__':
 
     ''' packs and layout '''
     textbox.pack(side=tk.TOP, fill=tk.BOTH, expand=tk.YES)
-    save_to_evernote.pack(side=tk.LEFT)
-    save_to_local.pack(side=tk.LEFT)
+    evernote_button.pack(side=tk.LEFT)
+    save_local_button.pack(side=tk.LEFT)
     save_to_google_drive.pack(side=tk.LEFT)
     save_git_lab.pack(side=tk.LEFT)
     search_duck_duck_go.pack(side=tk.LEFT)
