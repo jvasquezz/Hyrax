@@ -1,7 +1,37 @@
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
 <h3> Hyrax rune </h3> 
 <h4> Cloud connected typesetting system </h4>
 
+
 <h5>Get it running:</h5>
+<h5>1. Using Pyinstaller instead of py2app </h5>
+
+```terminal
+➜  ~ pip install pyinstaller
+➜  ~ pyi-makespec --windowed --onedir --i ./resources/img/icn.icns \
+      --osx-bundle-identifier "com.myname.macOS.myappname" app.py
+```
+Now, modify your `.spec` file:
+
+```python
+added_files = [
+ ('resources/img', 'resources/img'),
+ ( 'README.md', '.' )
+ ]
+```
+initialize a dictionary `added_files` with the relative path to your resources and set `datas = added_files`. In my application I used images located at ./resources/img relative to my main.py file.
+
+And to finilize, this is perhaps the easiest to forget step and not-so obvious:
+
+```
+➜  ~ pyinstaller --onefile app.spec
+```
+
+
+Refer to this and other posts [here](http://stackoverflow.com/a/38046953/5994618).
+
+<h5>2. Using py2app</h5>
 
 ```javascript
 ➜ virtualenv venv
@@ -75,3 +105,10 @@ AttributeError: 'ModuleGraph' object has no attribute 'load_module'
 ```
 
 Edit file where error occurred and rename `scan_code` or `load_module` with underscore on front i.e. `_load_module`. For more details, refer to [From a Python script to a portable Mac application with py2app](http://www.marinamele.com/from-a-python-script-to-a-portable-mac-application-with-py2app)
+
+<h5>3. Configure jenkins with Github private repositories </h5>
+```terminal
+➜  ~ sudo su - jenkins
+macbookPro:~ jenkins$
+macbookPro:~ jenkins$ git clone git@github.com:jvasquezz/privaterepo.git
+```
