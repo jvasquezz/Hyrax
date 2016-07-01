@@ -29,7 +29,7 @@ And to finilize, this is perhaps the easiest to forget step and not-so obvious:
 ```
 
 
-Refer to this and other posts [here](http://stackoverflow.com/a/38046953/5994618).
+Refer to this post [here](http://stackoverflow.com/a/38046953/5994618).
 
 <h5>2. Using py2app</h5>
 
@@ -111,4 +111,34 @@ Edit file where error occurred and rename `scan_code` or `load_module` with unde
 ➜  ~ sudo su - jenkins
 macbookPro:~ jenkins$
 macbookPro:~ jenkins$ git clone git@github.com:jvasquezz/privaterepo.git
+```
+
+<h5> 4. Add an Info.plist to the bundle:
+
+Using PyInstaller, add this dictionary to the app BUNDLE:
+
+```
+    info_plist={
+                'NSHighResolutionCapable': 'True',
+                'CFBundleName': APP_NAME,
+                'CFBundleDisplayName': APP_NAME,
+                'CFBundleGetInfoString': "Cloud connected typesetting",
+                'CFBundleIdentifier': "com.rurouni.macOS.hyrax",
+                'CFBundleVersion': "0.3.0",
+                'CFBundleShortVersionString': "0.3.0",
+                'NSHumanReadableCopyright': "Copyright © 2016, Rurouni, All Rights Reserved"
+                }
+```
+
+And for py2app, add to the setup file as OPTIONS:
+```
+    'plist': {
+        'CFBundleName': APP_NAME,
+        'CFBundleDisplayName': APP_NAME,
+        'CFBundleGetInfoString': "Cloud connected typesetting",
+        'CFBundleIdentifier': "com.rurouni.macOS.hyrax",
+        'CFBundleVersion': VERSION,
+        'CFBundleShortVersionString': VERSION,
+        'NSHumanReadableCopyright': COPYRIGHT
+    }
 ```

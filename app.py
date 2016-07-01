@@ -1,13 +1,12 @@
 import json
-import os
 import threading
 
 import evernote.edam.type.ttypes as types
+import os
+import resources.R as R
 import tkinter as tk
 from dotenv import load_dotenv
-from evernote.api.client import EvernoteClient as evernote_client
-
-import resources.R as R
+from evernote.api.client import EvernoteClient
 import settings
 
 load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
@@ -22,11 +21,13 @@ class TextFormat(tk.Text):
         tk.Text.__init__(self, root)
         self.line_count = '1'
         self.config_tags()
-        self.config(width=40, height=28, insertbackground='white', relief=tk.SOLID, selectbackground='#8000FF',
-                    wrap=tk.NONE,
-                    insertborderwidth='1', highlightthickness=0, bg="#272822", fg="#F8F8F2", bd=0, font="Verdana 13")
+        self.config(width=40, height=28, insertbackground='white')
+        self.config(relief=tk.SOLID, selectbackground='#8000FF')
+        self.config(wrap=tk.NONE, insertborderwidth='1', highlightthickness=0)
+        self.config(bg="#272822", fg="#F8F8F2", bd=0, font="Verdana 13")
+
         self.tag_add('default', '1.0', tk.END)
-        self.bind(sequence='<Shift-KeyRelease-#>', func=self.on_shift_hash_release)
+        self.bind(sequence='<Shift-KeyRelease-#>', func=self.shf_hash_release)
         self.bind(sequence='<Return>', func=self.on_line_break)
         pass
 
@@ -38,7 +39,7 @@ class TextFormat(tk.Text):
         for tag in self.tags:
             self.tag_remove(tag[0], start, end)
 
-    def on_shift_hash_release(self, event):
+    def shf_hash_release(self, event):
         current_line = self.index(tk.INSERT).split('.')[0]
         if current_line == self.line_count:
             self.tag_add("comment", tk.INSERT + '-1c', tk.END)
@@ -49,7 +50,8 @@ class TextFormat(tk.Text):
         while char != '\n':
             last_col += 1
             char = self.get('%s.%d' % (current_line, last_col))
-        self.tag_add("comment", tk.INSERT + '-1c', current_line + '.' + str(last_col))
+        end_of_line = current_line + '.' + str(last_col)
+        self.tag_add("comment", tk.INSERT + '-1c', end_of_line)
 
     def on_line_break(self, event):
         self.line_count = self.index(tk.END).split('.')[0]
@@ -61,7 +63,7 @@ class TextFormat(tk.Text):
             json.dump({'data': data, 'line_count': self.line_count}, f)
 
 
-# threads any decorated function - http://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators
+# threads any decorated function
 def threaded(function):
     def wrapper(*args, **kwargs):
         threading.Thread(target=function, args=args, kwargs=kwargs).start()
@@ -73,7 +75,8 @@ class ArdentButton(tk.Button):
     def __init__(self, root, which):
         tk.Button.__init__(self, root)
         self.icon = tk.PhotoImage(file=R.icons.get(which))
-        self.config(image=self.icon, width='25', height='25', bd=0, relief=tk.RIDGE)
+        self.config(image=self.icon, width='25', height='25', bd=0)
+        self.config(relief=tk.RIDGE)
         if 'evernote' is which:
             self.bind('<Button-1>', self.save_to_evernote)
         if 'local' is which:
@@ -105,7 +108,7 @@ class ArdentButton(tk.Button):
 
 
 class Accounts:
-    evernote = evernote_client
+    evernote = EvernoteClient
     load_from_cache = []
 
     def __init__(self):
@@ -114,10 +117,11 @@ class Accounts:
         pass
 
     def init_evernote(self):
-        self.evernote = evernote_client(token=settings.EVERNOTE_API_KEY,
-                                        consumer_key=settings.EVERNOTE_CONSUMER_KEY,
-                                        consumer_secret=settings.EVERNOTE_CONSUMER_SECRET,
-                                        sandbox=True)
+        ev = EvernoteClient(token=settings.EVERNOTE_API_KEY,
+                            consumer_key=settings.EVERNOTE_CONSUMER_KEY,
+                            consumer_secret=settings.EVERNOTE_CONSUMER_SECRET,
+                            sandbox=True)
+        self.evernote = ev
 
     def load_local_cache(self):
         try:
