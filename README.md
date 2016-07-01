@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/jvasquezz/Hyrax.svg?token=bGrcyjFtugXV4xQLdK6k&branch=develop)](https://travis-ci.com/jvasquezz/Hyrax)
+
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 
 <h3> Hyrax rune </h3> 
