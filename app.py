@@ -1,6 +1,8 @@
 import json
 import threading
 
+import sqlite3
+
 import evernote.edam.type.ttypes as types
 import os
 import resources.R as R
@@ -29,7 +31,11 @@ class TextFormat(tk.Text):
         self.tag_add('default', '1.0', tk.END)
         self.bind(sequence='<Shift-KeyRelease-#>', func=self.shf_hash_release)
         self.bind(sequence='<Return>', func=self.on_line_break)
+        self.bind(sequence='<Command-Return>', func=self.cmd_enter)
         pass
+
+    def cmd_enter(self, event):
+        ArdentButton.save_to_local(event)
 
     def config_tags(self):
         for tag in self.tags:
@@ -104,6 +110,20 @@ class ArdentButton(tk.Button):
 
     @staticmethod
     def save_to_local(event):
+        con = sqlite3.connect('files.db')
+        with con:
+            cur = con.cursor()
+            notes_table = 'CREATE TABLE IF NOT EXISTS notes (title, content, date)'
+            cur.execute(notes_table)
+            first_line = '1st line'
+            content = textbox.get('1.0', tk.END)
+            t = (first_line, content, 'today')
+            cur.execute('INSERT INTO notes VALUES (?,?,?)', t)
+            cur.execute('SELECT * FROM notes')
+            for data in cur.fetchall():
+                print(data)
+
+        print(event.char)
         print('saved to local')
 
 
