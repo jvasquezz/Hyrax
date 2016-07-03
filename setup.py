@@ -10,7 +10,7 @@ from setuptools import setup
 
 APP = ['app.py']
 APP_NAME = 'Hyrax'
-VERSION = "0.3.0"
+VERSION = "0.4.0"
 COPYRIGHT = u"Copyright © 2016, Rurouni, All Rights Reserved"
 
 DATA_FILES = []
