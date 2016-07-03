@@ -1,7 +1,11 @@
 # settings.py
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
+from builtins import *
 import sys
 
 from dotenv import load_dotenv
+
 from os import path, environ
 
 
@@ -23,4 +27,4 @@ load_dotenv(dot_env_path)
 EVERNOTE_API_KEY = environ.get('EVERNOTE_API_KEY')
 EVERNOTE_CONSUMER_KEY = environ.get('EVERNOTE_CONSUMER_KEY')
 EVERNOTE_CONSUMER_SECRET = environ.get('EVERNOTE_CONSUMER_SECRET')
-APP_VERSION = '0.4.1'
+APP_VERSION = '0.4.2'
