@@ -48,7 +48,7 @@ class TextFormat(tk.Text):
         self.on_line_break(event)
         ArdentButton.save_to_local(event)
         textbox.delete('1.0', tk.END)
-        textbox.insert('1.0',)
+        textbox.insert('1.0', '')
 
     def config_tags(self):
         for tag in self.tags:
@@ -169,6 +169,7 @@ if __name__ == '__main__':
     gui = tk.Tk()
     gui.title('hyrax')
     textbox = TextFormat(gui)
+    textbox.insert('1.0', '')
     accounts = Accounts()
 
     ''' button declarations '''
