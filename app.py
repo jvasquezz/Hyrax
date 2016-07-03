@@ -1,3 +1,7 @@
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
+from builtins import *
+
 import json
 import sqlite3
 import threading
@@ -136,8 +140,8 @@ class ArdentButton(tk.Button):
             t = (title, content, datetime.now())
             cur.execute('INSERT INTO notes VALUES (?,?,?)', t)
             cur.execute('SELECT title, content FROM notes')
-            for data in cur.fetchall():
-                print(data)
+            for t, c in cur.fetchall():
+                print('\ntitle: ', t, '\ncontent:\n', c)
 
         print(event.char)
         print('saved to local')

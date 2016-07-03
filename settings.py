@@ -1,7 +1,11 @@
 # settings.py
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
+from builtins import *
 import sys
 
 from dotenv import load_dotenv
+
 from os import path, environ
 
 
