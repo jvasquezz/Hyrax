@@ -3,6 +3,8 @@ import threading
 
 import sqlite3
 
+import sys
+
 import evernote.edam.type.ttypes as types
 import os
 import resources.R as R
@@ -11,8 +13,18 @@ from dotenv import load_dotenv
 from evernote.api.client import EvernoteClient
 import settings
 
-load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
-print('cwd:', os.getcwd())
+
+def module_path():
+    encoding = sys.getfilesystemencoding()
+    # All of the modules are built-in to the interpreter, e.g., by pyInstaller
+    if hasattr(sys, "frozen"):
+        return os.path.dirname(unicode(sys.executable, encoding))
+    return os.path.dirname(unicode(__file__, encoding))
+
+
+print('module path:', module_path())
+
+load_dotenv(os.path.join(module_path(), '.env'))
 
 
 class TextFormat(tk.Text):
@@ -64,7 +76,7 @@ class TextFormat(tk.Text):
         self.remove_tags(tk.INSERT, tk.END)
         self.tag_add('default', tk.INSERT + '-1c', tk.END)
         ''' auto save on line break '''
-        with open('data.json', 'wb') as f:
+        with open(module_path()+'/data.json', 'wb') as f:
             data = self.get('1.0', tk.END)
             json.dump({'data': data, 'line_count': self.line_count}, f)
 
@@ -110,11 +122,11 @@ class ArdentButton(tk.Button):
 
     @staticmethod
     def save_to_local(event):
-        con = sqlite3.connect('files.db')
+        con = sqlite3.connect(module_path() + '/files.db')
         with con:
             cur = con.cursor()
-            notes_table = 'CREATE TABLE IF NOT EXISTS notes (title, content, date)'
-            cur.execute(notes_table)
+            notes_t = 'CREATE TABLE IF NOT EXISTS notes (title, content, date)'
+            cur.execute(notes_t)
             first_line = '1st line'
             content = textbox.get('1.0', tk.END)
             t = (first_line, content, 'today')
@@ -145,7 +157,7 @@ class Accounts:
 
     def load_local_cache(self):
         try:
-            with open('data.json') as cached_json_object:
+            with open(module_path()+'/data.json') as cached_json_object:
                 self.load_from_cache = json.load(cached_json_object)
                 textbox.insert(tk.INSERT, self.load_from_cache['data'])
                 textbox.line_count = self.load_from_cache['line_count']
@@ -157,6 +169,7 @@ if __name__ == '__main__':
     gui = tk.Tk()
     gui.title('hyrax')
     textbox = TextFormat(gui)
+    textbox.insert(tk.INSERT, module_path())
     accounts = Accounts()
 
     ''' button declarations '''
