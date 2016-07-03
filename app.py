@@ -42,7 +42,11 @@ class TextFormat(tk.Text):
         self.bind(sequence='<Shift-KeyRelease-#>', func=self.shf_hash_release)
         self.bind(sequence='<Return>', func=self.on_line_break)
         self.bind(sequence='<Command-Return>', func=self.cmd_return)
+        self.bind(sequence='<Command-a>', func=self.cmd_a)
         pass
+
+    def cmd_a(self, event):
+        self.tag_add(tk.SEL, '1.0', tk.END)
 
     def cmd_return(self, event):
         self.on_line_break(event)
@@ -79,13 +83,14 @@ class TextFormat(tk.Text):
 
     @threaded
     def on_line_break(self, event):
-        self.line_count = self.index(tk.END).split('.')[0]
+        line_number = self.index(tk.END).split('.')[0]
+        self.line_count = str(int(line_number) - 1)
         self.remove_tags(tk.INSERT, tk.END)
         self.tag_add('default', tk.INSERT + '-1c', tk.END)
         ''' auto save on line break '''
         with open(settings.module_path() + '/data.json', 'wb') as f:
-            data = self.get('1.0', tk.END)
-            json.dump({'data': data, 'line_count': self.line_count}, f)
+            data = self.get('1.0', tk.END).rstrip()
+            json.dump({'data': data}, f)
 
 
 class ArdentButton(tk.Button):
@@ -160,7 +165,8 @@ class Accounts:
             with open(settings.module_path() + '/data.json') as json_object:
                 self.load_from_cache = json.load(json_object)
                 textbox.insert(tk.INSERT, self.load_from_cache['data'])
-                textbox.line_count = self.load_from_cache['line_count']
+                line_number = textbox.index(tk.END).split('.')[0]
+                textbox.line_count = str(int(line_number) - 1)
         except IOError:
             pass
 
