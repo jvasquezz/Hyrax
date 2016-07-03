@@ -41,7 +41,7 @@ class TextFormat(tk.Text):
         self.tag_add('default', '1.0', tk.END)
         self.bind(sequence='<Shift-KeyRelease-#>', func=self.shf_hash_release)
         self.bind(sequence='<Return>', func=self.on_line_break)
-        self.bind(sequence='<Command-Return>', func=self.cmd_return)
+        self.bind(sequence='<Command-KeyRelease-Return>', func=self.cmd_return)
         self.bind(sequence='<Command-a>', func=self.cmd_a)
         pass
 
@@ -49,10 +49,9 @@ class TextFormat(tk.Text):
         self.tag_add(tk.SEL, '1.0', tk.END)
 
     def cmd_return(self, event):
-        self.on_line_break(event)
         ArdentButton.save_to_local(event)
-        textbox.delete('1.0', tk.END)
-        textbox.insert('1.0', '')
+        self.delete('1.0', tk.END)
+        self.on_line_break(event)
 
     def config_tags(self):
         for tag in self.tags:
@@ -133,7 +132,7 @@ class ArdentButton(tk.Button):
                           '(title, content, date)'
             cur.execute(table_notes)
             title = textbox.get('1.0', textbox.end_of_line('1'))
-            content = textbox.get('1.0', tk.END)
+            content = textbox.get('1.0', tk.END).rstrip()
             t = (title, content, datetime.now())
             cur.execute('INSERT INTO notes VALUES (?,?,?)', t)
             cur.execute('SELECT title, content FROM notes')
