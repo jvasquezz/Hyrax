@@ -1,30 +1,28 @@
 import json
-import threading
-
 import sqlite3
-
-import sys
+import threading
+from datetime import datetime
 
 import evernote.edam.type.ttypes as types
 import os
 import resources.R as R
+import settings
 import tkinter as tk
 from dotenv import load_dotenv
 from evernote.api.client import EvernoteClient
-import settings
 
 
-def module_path():
-    encoding = sys.getfilesystemencoding()
-    # All of the modules are built-in to the interpreter, e.g., by pyInstaller
-    if hasattr(sys, "frozen"):
-        return os.path.dirname(unicode(sys.executable, encoding))
-    return os.path.dirname(unicode(__file__, encoding))
+# threads any decorated function
+def threaded(function):
+    def wrapper(*args, **kwargs):
+        threading.Thread(target=function, args=args, kwargs=kwargs).start()
+
+    return wrapper
 
 
-print('module path:', module_path())
-
-load_dotenv(os.path.join(module_path(), '.env'))
+print('module path:', settings.module_path())
+print(os.path.join(settings.module_path(), '.env'))
+load_dotenv(settings.dot_env_path)
 
 
 class TextFormat(tk.Text):
@@ -43,11 +41,14 @@ class TextFormat(tk.Text):
         self.tag_add('default', '1.0', tk.END)
         self.bind(sequence='<Shift-KeyRelease-#>', func=self.shf_hash_release)
         self.bind(sequence='<Return>', func=self.on_line_break)
-        self.bind(sequence='<Command-Return>', func=self.cmd_enter)
+        self.bind(sequence='<Command-Return>', func=self.cmd_return)
         pass
 
-    def cmd_enter(self, event):
+    def cmd_return(self, event):
+        self.on_line_break(event)
         ArdentButton.save_to_local(event)
+        textbox.delete('1.0', tk.END)
+        textbox.insert('1.0',)
 
     def config_tags(self):
         for tag in self.tags:
@@ -63,30 +64,28 @@ class TextFormat(tk.Text):
             self.tag_add("comment", tk.INSERT + '-1c', tk.END)
             return
 
+        # last_col = self.last_col(current_line)
+        # current_line + '.' + last_col
+        eol = self.end_of_line(current_line)
+        self.tag_add("comment", tk.INSERT + '-1c', eol)
+
+    def end_of_line(self, current_line):
         last_col = 0
         char = self.get('%s.%d' % (current_line, last_col))
         while char != '\n':
             last_col += 1
             char = self.get('%s.%d' % (current_line, last_col))
-        end_of_line = current_line + '.' + str(last_col)
-        self.tag_add("comment", tk.INSERT + '-1c', end_of_line)
+        return current_line + '.' + str(last_col)
 
+    @threaded
     def on_line_break(self, event):
         self.line_count = self.index(tk.END).split('.')[0]
         self.remove_tags(tk.INSERT, tk.END)
         self.tag_add('default', tk.INSERT + '-1c', tk.END)
         ''' auto save on line break '''
-        with open(module_path()+'/data.json', 'wb') as f:
+        with open(settings.module_path() + '/data.json', 'wb') as f:
             data = self.get('1.0', tk.END)
             json.dump({'data': data, 'line_count': self.line_count}, f)
-
-
-# threads any decorated function
-def threaded(function):
-    def wrapper(*args, **kwargs):
-        threading.Thread(target=function, args=args, kwargs=kwargs).start()
-
-    return wrapper
 
 
 class ArdentButton(tk.Button):
@@ -122,16 +121,17 @@ class ArdentButton(tk.Button):
 
     @staticmethod
     def save_to_local(event):
-        con = sqlite3.connect(module_path() + '/files.db')
+        con = sqlite3.connect(settings.module_path() + '/files.db')
         with con:
             cur = con.cursor()
-            notes_t = 'CREATE TABLE IF NOT EXISTS notes (title, content, date)'
-            cur.execute(notes_t)
-            first_line = '1st line'
+            table_notes = 'CREATE TABLE IF NOT EXISTS notes' \
+                          '(title, content, date)'
+            cur.execute(table_notes)
+            title = textbox.get('1.0', textbox.end_of_line('1'))
             content = textbox.get('1.0', tk.END)
-            t = (first_line, content, 'today')
+            t = (title, content, datetime.now())
             cur.execute('INSERT INTO notes VALUES (?,?,?)', t)
-            cur.execute('SELECT * FROM notes')
+            cur.execute('SELECT title, content FROM notes')
             for data in cur.fetchall():
                 print(data)
 
@@ -157,8 +157,8 @@ class Accounts:
 
     def load_local_cache(self):
         try:
-            with open(module_path()+'/data.json') as cached_json_object:
-                self.load_from_cache = json.load(cached_json_object)
+            with open(settings.module_path() + '/data.json') as json_object:
+                self.load_from_cache = json.load(json_object)
                 textbox.insert(tk.INSERT, self.load_from_cache['data'])
                 textbox.line_count = self.load_from_cache['line_count']
         except IOError:
@@ -169,7 +169,6 @@ if __name__ == '__main__':
     gui = tk.Tk()
     gui.title('hyrax')
     textbox = TextFormat(gui)
-    textbox.insert(tk.INSERT, module_path())
     accounts = Accounts()
 
     ''' button declarations '''
