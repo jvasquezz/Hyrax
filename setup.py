@@ -10,6 +10,9 @@ from setuptools import setup
 
 APP = ['app.py']
 APP_NAME = 'Hyrax'
+VERSION = "0.4.0"
+COPYRIGHT = u"Copyright © 2016, Rurouni, All Rights Reserved"
+
 DATA_FILES = []
 OPTIONS = {
     'iconfile': 'resources/img/icn.icns',
@@ -20,9 +23,9 @@ OPTIONS = {
         'CFBundleDisplayName': APP_NAME,
         'CFBundleGetInfoString': "Cloud connected typesetting",
         'CFBundleIdentifier': "com.rurouni.macOS.hyrax",
-        'CFBundleVersion': "0.3.0",
-        'CFBundleShortVersionString': "0.3.0",
-        'NSHumanReadableCopyright': u"Copyright © 2016, Rurouni, All Rights Reserved"
+        'CFBundleVersion': VERSION,
+        'CFBundleShortVersionString': VERSION,
+        'NSHumanReadableCopyright': COPYRIGHT
     }
 }
 setup(

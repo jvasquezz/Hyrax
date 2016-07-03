@@ -1,11 +1,25 @@
 # settings.py
-import os
-from os.path import join, dirname
-from dotenv import load_dotenv
+import sys
 
-dot_env_path = join(dirname(__file__), '.env')
+from dotenv import load_dotenv
+from os import path, environ
+
+
+def we_are_frozen():
+    # All of the modules are built-in to the interpreter, e.g., by pyInstaller
+    return hasattr(sys, "frozen")
+
+
+def module_path():
+    encoding = sys.getfilesystemencoding()
+    if we_are_frozen():
+        return path.dirname(unicode(sys.executable, encoding))
+    return path.dirname(unicode(__file__, encoding))
+
+
+dot_env_path = path.join(module_path(), '.env')
 load_dotenv(dot_env_path)
 
-EVERNOTE_API_KEY = os.environ.get('EVERNOTE_API_KEY')
-EVERNOTE_CONSUMER_KEY = os.environ.get('EVERNOTE_CONSUMER_KEY')
-EVERNOTE_CONSUMER_SECRET = os.environ.get('EVERNOTE_CONSUMER_SECRET')
+EVERNOTE_API_KEY = environ.get('EVERNOTE_API_KEY')
+EVERNOTE_CONSUMER_KEY = environ.get('EVERNOTE_CONSUMER_KEY')
+EVERNOTE_CONSUMER_SECRET = environ.get('EVERNOTE_CONSUMER_SECRET')
